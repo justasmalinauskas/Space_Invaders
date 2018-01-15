@@ -2,11 +2,11 @@
 {
     public class Projectile : Particle
     {
-        public Projectile(int x, int y)
+        public Projectile(int i, int j)
         {
             Skin = Helper.HexToChar("00B7");
-            X = x;
-            Y = y;
+            I = i;
+            J = j;
             Type = "Projectile";
         }
     }

@@ -6,7 +6,6 @@ namespace Space_Invaders
 {
     public static class Program
     {
-        private static Timer _timer;
         private static TheGame _game;
         
         public static void Main(string[] args)
@@ -15,21 +14,14 @@ namespace Space_Invaders
             Console.ReadLine();  
         }
 
-        private static void OnTimerElapsed(object sender, ElapsedEventArgs e)
-        {     
-            _game.UpdateScrren(e.SignalTime.Millisecond);
-        }
-
         private static void StartGame()
         {
             _game = new TheGame();
-            _timer = new Timer(1000);
-            _timer.Elapsed += OnTimerElapsed;
-            _timer.Interval = 500;
             _game.RenderGameSpace();
             while (_game.IsOnGoing())
             {
-                _timer.Enabled = true;
+                //_timer.Enabled = true;
+                _game.UpdateScrren();
                 ConsoleKeyInfo pressKey;
                 pressKey = Console.ReadKey();
 
@@ -48,7 +40,6 @@ namespace Space_Invaders
                         break;
                 }
             }
-            _timer.Enabled = false;
         }
     }
 }

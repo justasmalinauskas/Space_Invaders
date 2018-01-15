@@ -2,14 +2,29 @@
 {
     public class Particle
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int I { get; set; }
+        public int J { get; set; }
         public char Skin { get; protected set; }
         public string Type { get; protected set; }
 
-        public void MoveUp()
+        public virtual void MoveUp()
         {
-            X--;
+            I--;
+        }
+        
+        public virtual void MoveDown()
+        {
+            I++;
+        }
+        
+        public virtual void MoveRight()
+        {
+            J++;
+        }
+        
+        public virtual void MoveLeft()
+        {
+            J--;
         }
     }
 }

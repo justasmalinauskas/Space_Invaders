@@ -2,11 +2,11 @@
 {
     public class Alien : Particle
     {
-        public Alien(int x, int y)
+        public Alien(int i, int j)
         {
             Skin = Helper.HexToChar("02C7");
-            X = x;
-            Y = y;
+            I = i;
+            J = j;
             Type = "Alien";
 
         }

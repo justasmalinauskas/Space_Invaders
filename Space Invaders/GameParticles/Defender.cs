@@ -2,11 +2,11 @@
 {
     public class Defender : Particle
     {
-        public Defender(int x, int y)
+        public Defender(int i, int j)
         {
             Skin = Helper.HexToChar("02C6");
-            X = x;
-            Y = y;
+            I = i;
+            J = j;
             Type = "Defender";
         }
     }
