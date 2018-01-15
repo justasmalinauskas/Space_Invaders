@@ -9,14 +9,16 @@ namespace Space_Invaders
     {
         private const int AlienShipsRow = 5;
         private const int AlienShipsColumn = 6;
+        private static readonly List<Particle> Particles = new List<Particle>();
+        private static long _score;
         private readonly int _defenderId;
         private readonly char[,] _gameField = new char[20, 30];
-        private bool _movingright = true;
         private bool _gameStatus;
-        private static readonly List<Particle> Particles = new List<Particle>();
+        private bool _movingright = true;
 
         public TheGame()
         {
+            _score = 0;
             DrawGameSpace();
             _defenderId = GetDefenderId();
             _gameStatus = true;
@@ -26,17 +28,17 @@ namespace Space_Invaders
         private void DrawGameSpace()
         {
             for (var i = 0; i < _gameField.GetUpperBound(1); i++)
-                for (var j = 0; j < _gameField.GetUpperBound(0); j++)
-                    if (DefenderStart(i, j))
-                        Particles.Add(new Defender(i, j));
+            for (var j = 0; j < _gameField.GetUpperBound(0); j++)
+                if (DefenderStart(i, j))
+                    Particles.Add(new Defender(i, j));
             DrawAliens();
         }
 
         private static void DrawAliens()
         {
             for (var i = 0; i < AlienShipsRow; i++)
-                for (var j = 0; j < AlienShipsColumn; j++)
-                    Particles.Add(new Alien(i, j));
+            for (var j = 0; j < AlienShipsColumn; j++)
+                Particles.Add(new Alien(i, j));
         }
 
         private bool DefenderStart(int i, int j)
@@ -46,16 +48,13 @@ namespace Space_Invaders
 
         public void RenderGameSpace()
         {
+            Console.WriteLine("Score: " + _score);
             for (var i = 0; i < _gameField.GetUpperBound(1); i++)
-            {
-                for (var j = 0; j < _gameField.GetUpperBound(0); j++)
-                {
-                    if (HasAnyParticle(i, j))
-                        _gameField[j, i] = Particles.Find(t => t.I == i && t.J == j).Skin;
-                    else
-                        _gameField[j, i] = ' ';
-                }
-            }
+            for (var j = 0; j < _gameField.GetUpperBound(0); j++)
+                if (HasAnyParticle(i, j))
+                    _gameField[j, i] = Particles.Find(t => t.I == i && t.J == j).Skin;
+                else
+                    _gameField[j, i] = ' ';
 
             for (var i = 0; i < _gameField.GetUpperBound(1); i++)
             {
@@ -63,6 +62,7 @@ namespace Space_Invaders
                     Console.Write(_gameField[j, i] + "\t");
                 Console.WriteLine("\t");
             }
+
             if (!HasGameLost()) return;
             Console.WriteLine("You lost...");
             _gameStatus = false;
@@ -108,10 +108,12 @@ namespace Space_Invaders
                 Particles.RemoveAt(i);
                 for (var j = 0; j < Particles.Count; j++)
                 {
-                    if (!Particles[j].Type.Equals("Projectile") || particle.I != Particles[j].I || particle.J != Particles[j].J) continue;
+                    if (!Particles[j].Type.Equals("Projectile") || particle.I != Particles[j].I ||
+                        particle.J != Particles[j].J) continue;
                     Particles.RemoveAt(j);
+                    _score = _score + 10;
                 }
-            }   
+            }
         }
 
         //Nepermeta normaliai per eilute, kai priarteja prie krasto
@@ -119,32 +121,24 @@ namespace Space_Invaders
         {
             foreach (var particle in Particles)
             {
-                if (!particle.Type.Equals("Alien")) 
+                if (!particle.Type.Equals("Alien"))
                     continue;
                 if (_movingright)
-                {   
-                    particle.MoveRight();   
-                    if (particle.J == _gameField.GetUpperBound(0) - 1)
-                    {
-                        MoveAliensOnX(Actions.Right, particle.I);
-                        MoveDown();
-                        _movingright = false;
-                        break;
-                    }
-                                      
-                }
-                else
                 {
-                    particle.MoveLeft();
-                    if (particle.J == _gameField.GetLowerBound(0) + 1)
-                    {
-                        MoveAliensOnX(Actions.Left, particle.I);
-                        MoveDown();
-                        _movingright = true;
-                        break;
-                    }
-                    
+                    particle.MoveRight();
+                    if (particle.J != _gameField.GetUpperBound(0) - 1) continue;
+                    MoveAliensOnX(Actions.Right, particle.I);
+                    MoveDown();
+                    _movingright = false;
+                    break;
                 }
+
+                particle.MoveLeft();
+                if (particle.J != _gameField.GetLowerBound(0) + 1) continue;
+                MoveAliensOnX(Actions.Left, particle.I);
+                MoveDown();
+                _movingright = true;
+                break;
             }
         }
 
@@ -155,7 +149,7 @@ namespace Space_Invaders
                 case Actions.Right:
                 {
                     foreach (var particle in Particles)
-                        if (particle.Type.Equals("Alien") && particle.I == I-2)
+                        if (particle.Type.Equals("Alien") && particle.I == I - 2)
                             particle.MoveRight();
 
                     break;
@@ -163,20 +157,21 @@ namespace Space_Invaders
                 case Actions.Left:
                 {
                     foreach (var particle in Particles)
-                        if (particle.Type.Equals("Alien") && particle.I == I+2)
+                        if (particle.Type.Equals("Alien") && particle.I == I + 2)
                             particle.MoveLeft();
 
                     break;
                 }
             }
         }
-            
+
         private static void MoveDown()
         {
             foreach (var particle in Particles)
                 if (particle.Type.Equals("Alien"))
                     particle.MoveDown();
         }
+
         private static void CountAliens()
         {
             var count = 0;
@@ -215,17 +210,16 @@ namespace Space_Invaders
                 case Actions.Shot:
                     Particles.Add(new Projectile(Particles[_defenderId].I, Particles[_defenderId].J));
                     break;
-                default: 
+                default:
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);
             }
-
         }
 
         private bool DefenderInBounds(Actions action)
         {
             if (action == Actions.Left)
-                return (Particles[_defenderId].J > 0 && Particles[_defenderId].J < _gameField.GetUpperBound(0) - 1);
-            return (Particles[_defenderId].J >= 0 && Particles[_defenderId].J < _gameField.GetUpperBound(0) - 2);
+                return Particles[_defenderId].J > 0 && Particles[_defenderId].J < _gameField.GetUpperBound(0) - 1;
+            return Particles[_defenderId].J >= 0 && Particles[_defenderId].J < _gameField.GetUpperBound(0) - 2;
         }
-    }  
+    }
 }

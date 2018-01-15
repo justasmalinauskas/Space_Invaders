@@ -8,7 +8,6 @@
             I = i;
             J = j;
             Type = "Alien";
-
         }
     }
 }

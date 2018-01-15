@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Timers;
 using Space_Invaders.GameParticles;
 
 namespace Space_Invaders
@@ -7,11 +6,11 @@ namespace Space_Invaders
     public static class Program
     {
         private static TheGame _game;
-        
+
         public static void Main(string[] args)
         {
             StartGame();
-            Console.ReadLine();  
+            Console.ReadLine();
         }
 
         private static void StartGame()

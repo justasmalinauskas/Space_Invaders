@@ -11,17 +11,17 @@
         {
             I--;
         }
-        
+
         public virtual void MoveDown()
         {
             I++;
         }
-        
+
         public virtual void MoveRight()
         {
             J++;
         }
-        
+
         public virtual void MoveLeft()
         {
             J--;

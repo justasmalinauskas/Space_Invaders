@@ -2,6 +2,8 @@
 {
     public enum Actions
     {
-        Left, Right, Shot
+        Left,
+        Right,
+        Shot
     }
 }
